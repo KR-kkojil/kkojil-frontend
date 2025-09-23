@@ -4,7 +4,8 @@ import { memo, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { MessageCircle, ArrowRight, Clock, User } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
+import { MessageCircle, ArrowRight, Clock, User, Share2 } from "lucide-react"
 import { getCategoryColor } from "@/lib/constants"
 import type { Question } from "@/types"
 
@@ -15,18 +16,43 @@ interface QuestionCardProps {
 }
 
 export const QuestionCard = memo(function QuestionCard({ question, onViewChain, onContinueChain }: QuestionCardProps) {
+  const { toast } = useToast()
+
   const handleViewChain = useCallback(() => {
     onViewChain(question.id)
   }, [onViewChain, question.id])
 
-  const handleContinueChain = useCallback(() => {
-    onContinueChain(question.id)
-  }, [onContinueChain, question.id])
+  const handleShare = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation() // 카드 전체 클릭 방지
+      const questionUrl = `${window.location.origin}/questions/${question.id}`
+      navigator.clipboard.writeText(questionUrl).then(
+        () => {
+          toast({
+            title: "클립보드에 복사됨",
+            description: "질문 링크가 클립보드에 복사되었습니다.",
+          })
+        },
+        (err) => {
+          console.error("클립보드 복사 실패: ", err)
+          toast({
+            title: "복사 실패",
+            description: "링크 복사에 실패했습니다. 다시 시도해주세요.",
+            variant: "destructive",
+          })
+        },
+      )
+    },
+    [question.id, toast],
+  )
 
   const categoryColor = getCategoryColor(question.category)
 
   return (
-    <Card className="p-3 sm:p-4 md:p-6 hover:shadow-md transition-shadow cursor-pointer">
+    <Card
+      className="p-3 sm:p-4 md:p-6 hover:shadow-md transition-shadow cursor-pointer"
+      onClick={handleViewChain}
+    >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 gap-2 sm:gap-0">
         <div className="flex flex-wrap items-center gap-2">
           <Badge className={`${categoryColor} text-xs`}>{question.category}</Badge>
@@ -57,8 +83,11 @@ export const QuestionCard = memo(function QuestionCard({ question, onViewChain, 
         </div>
       )}
 
-      <div className="flex items-center justify-between">
-        <div></div>
+      <div className="flex items-center justify-end gap-2">
+        <Button variant="outline" size="sm" className="gap-2 text-xs sm:text-sm" onClick={handleShare}>
+          <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
+          <span className="hidden xs:inline">공유하기</span>
+        </Button>
         <Button size="sm" className="gap-2 w-full sm:w-auto text-xs sm:text-sm" onClick={handleViewChain}>
           <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4" />
           <span className="hidden xs:inline">질문 체인 보기</span>
