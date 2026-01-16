@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { TrendingUp, Clock, Users, MessageCircle, HelpCircle, X } from "lucide-react"
+import { TrendingUp, Clock, Users, MessageCircle, HelpCircle, X, List } from "lucide-react"
 import { AIRecommendation } from "./ai-recommendation"
 import { useEffect, useState } from "react"
-import { getRecentContent, getCategoryStats, getTrendingQuestions, type Question } from "@/lib/storage"
+import { getRecentContent, getCategoryStats, type Question } from "@/lib/storage"
 
 interface SidebarProps {
   onAIQuestionSelect?: (question: string, category: string) => void
@@ -14,6 +14,7 @@ interface SidebarProps {
   onQuestionSelect?: (questionId: number) => void
   isOpen?: boolean
   onClose?: () => void
+  questions?: Question[]
 }
 
 export function Sidebar({
@@ -23,21 +24,19 @@ export function Sidebar({
   onQuestionSelect,
   isOpen = true,
   onClose,
+  questions = [],
 }: SidebarProps) {
   const [recentContent, setRecentContent] = useState<
     Array<{ type: "question" | "answer"; content: string; time: string; author: string }>
   >([])
   const [categoryStats, setCategoryStats] = useState<Array<{ name: string; count: number; color: string }>>([])
-  const [trendingQuestions, setTrendingQuestions] = useState<Question[]>([])
 
   useEffect(() => {
     const recentData = getRecentContent() || []
     const categoryData = getCategoryStats() || []
-    const trendingData = getTrendingQuestions() || []
 
     setRecentContent(recentData)
     setCategoryStats(categoryData)
-    setTrendingQuestions(trendingData)
   }, [])
 
   const handleContactDeveloper = () => {
@@ -54,7 +53,7 @@ export function Sidebar({
     }
   }
 
-  const handleTrendingQuestionClick = (questionId: number) => {
+  const handleQuestionClick = (questionId: number) => {
     if (onQuestionSelect) {
       onQuestionSelect(questionId)
     }
@@ -86,7 +85,7 @@ export function Sidebar({
           </div>
 
           <div className="space-y-4 md:space-y-6">
-            <AIRecommendation onQuestionSelect={onAIQuestionSelect || (() => {})} />
+            <AIRecommendation onQuestionSelect={onAIQuestionSelect || (() => {})}/>
 
             {/* 카테고리 */}
             <div>
@@ -122,20 +121,20 @@ export function Sidebar({
               </div>
             </div>
 
-            {/* 인기 질문 */}
+            {/* 최신 질문 */}
             <div>
               <h3 className="font-semibold mb-3 flex items-center gap-2 text-sm md:text-base">
-                <TrendingUp className="h-4 w-4" />
-                인기 질문
+                <List className="h-4 w-4" />
+                최신 질문
               </h3>
               <div className="space-y-1 md:space-y-2">
-                {Array.isArray(trendingQuestions) &&
-                  trendingQuestions.map((question) => (
+                {Array.isArray(questions) &&
+                  questions.slice(0, 10).map((question) => (
                     <Button
                       key={question.id}
                       variant="ghost"
                       className="w-full justify-start h-auto p-2 md:p-3 text-left hover:bg-muted/80"
-                      onClick={() => handleTrendingQuestionClick(question.id)}
+                      onClick={() => handleQuestionClick(question.id)}
                     >
                       <div className="flex flex-col items-start gap-1 w-full min-w-0">
                         <div className="w-full truncate text-xs md:text-sm font-medium" title={question.title}>

@@ -46,7 +46,6 @@ export interface SearchFilters {
 export interface UIState {
   sidebarOpen: boolean
   showQuestionForm: boolean
-  selectedChain: number | null
   prefilledQuestion: { text: string; category: string } | null
 }
 
@@ -113,10 +112,9 @@ export interface UseQuestionsReturn {
   refreshQuestions: () => void
 }
 
-export interface UseUIStateReturn extends UIState {
+export interface UseUIStateReturn extends Omit<UIState, 'selectedChain'> {
   setSidebarOpen: (open: boolean) => void
   setShowQuestionForm: (show: boolean) => void
-  setSelectedChain: (id: number | null) => void
   setPrefilledQuestion: (data: { text: string; category: string } | null) => void
   resetState: () => void
 }

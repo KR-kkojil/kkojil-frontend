@@ -6,7 +6,6 @@ import { Header } from "@/components/header"
 import { Sidebar } from "@/components/sidebar"
 import { QuestionCard } from "@/components/question-card"
 import { QuestionForm } from "@/components/question-form"
-import { QuestionChain } from "@/components/question-chain"
 import { BannerAd } from "@/components/banner-ad"
 import { Footer } from "@/components/footer"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
@@ -30,11 +29,9 @@ export default function HomePage() {
   const {
     sidebarOpen,
     showQuestionForm,
-    selectedChain,
     prefilledQuestion,
     setSidebarOpen,
     setShowQuestionForm,
-    setSelectedChain,
     setPrefilledQuestion,
     resetState,
   } = useUIState()
@@ -75,13 +72,6 @@ export default function HomePage() {
     setPrefilledQuestion(null)
   }, [setShowQuestionForm, setPrefilledQuestion])
 
-  const handleViewChain = useCallback(
-    (id: number) => {
-      setSelectedChain(id)
-    },
-    [setSelectedChain],
-  )
-
   const handleQuestionSelect = useCallback(
     (questionId: number) => {
       filterByCategory(null)
@@ -117,13 +107,6 @@ export default function HomePage() {
     filterByCategory(null)
     resetState()
   }, [searchQuestions, filterByCategory, resetState])
-
-  const getSelectedQuestion = useCallback(
-    (id: number): Question | undefined => {
-      return questions.find((q) => q.id === id)
-    },
-    [questions],
-  )
 
   const getPageTitle = useCallback(() => {
     const hasSearch = filteredQuestions !== questions
@@ -236,6 +219,7 @@ export default function HomePage() {
             onQuestionSelect={handleQuestionSelect}
             isOpen={sidebarOpen}
             onClose={handleSidebarClose}
+            questions={filteredQuestions}
           />
 
           <main className="flex-1 w-full md:w-auto p-3 sm:p-4 md:p-6" role="main">
@@ -263,7 +247,7 @@ export default function HomePage() {
                         }}
                         className="transition-all duration-300"
                       >
-                        <QuestionCard question={question} onViewChain={handleViewChain} onContinueChain={() => {}} />
+                        <QuestionCard question={question} onContinueChain={() => {}} />
                       </div>
 
                       {(index + 1) % 3 === 0 && (
@@ -341,10 +325,6 @@ export default function HomePage() {
             onSubmit={handleNewQuestion}
             prefilledData={prefilledQuestion}
           />
-        )}
-
-        {selectedChain && (
-          <QuestionChain rootQuestion={getSelectedQuestion(selectedChain)!} onClose={() => setSelectedChain(null)} />
         )}
       </div>
     </>

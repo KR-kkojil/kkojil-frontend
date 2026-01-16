@@ -1,6 +1,7 @@
 "use client"
 
 import { memo, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,16 +12,16 @@ import type { Question } from "@/types"
 
 interface QuestionCardProps {
   question: Question
-  onViewChain: (id: number) => void
   onContinueChain: (id: number) => void
 }
 
-export const QuestionCard = memo(function QuestionCard({ question, onViewChain, onContinueChain }: QuestionCardProps) {
+export const QuestionCard = memo(function QuestionCard({ question, onContinueChain }: QuestionCardProps) {
   const { toast } = useToast()
+  const router = useRouter()
 
-  const handleViewChain = useCallback(() => {
-    onViewChain(question.id)
-  }, [onViewChain, question.id])
+  const handleNavigate = useCallback(() => {
+    router.push(`/questions/${question.id}`)
+  }, [router, question.id])
 
   const handleShare = useCallback(
     (e: React.MouseEvent) => {
@@ -51,7 +52,7 @@ export const QuestionCard = memo(function QuestionCard({ question, onViewChain, 
   return (
     <Card
       className="p-3 sm:p-4 md:p-6 hover:shadow-md transition-shadow cursor-pointer"
-      onClick={handleViewChain}
+      onClick={handleNavigate}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 gap-2 sm:gap-0">
         <div className="flex flex-wrap items-center gap-2">
@@ -88,7 +89,7 @@ export const QuestionCard = memo(function QuestionCard({ question, onViewChain, 
           <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
           <span className="hidden xs:inline">공유하기</span>
         </Button>
-        <Button size="sm" className="gap-2 w-full sm:w-auto text-xs sm:text-sm" onClick={handleViewChain}>
+        <Button size="sm" className="gap-2 w-full sm:w-auto text-xs sm:text-sm" onClick={handleNavigate}>
           <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4" />
           <span className="hidden xs:inline">질문 체인 보기</span>
           <span className="xs:hidden">체인 보기</span>

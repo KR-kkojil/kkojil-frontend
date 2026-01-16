@@ -6,25 +6,21 @@ import type { UseUIStateReturn } from "@/types"
 export function useUIState(): UseUIStateReturn {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [showQuestionForm, setShowQuestionForm] = useState(false)
-  const [selectedChain, setSelectedChain] = useState<number | null>(null)
-  const [prefilledQuestion, setPrefilledQuestion] = useState<{ text: string; category: string } | null>(null)
+  const [prefilledQuestionData, setPrefilledQuestionData] = useState<{ text: string; category: string } | null>(null)
 
   const resetState = useCallback(() => {
     setSidebarOpen(false)
     setShowQuestionForm(false)
-    setSelectedChain(null)
-    setPrefilledQuestion(null)
+    setPrefilledQuestionData(null)
   }, [])
 
   return {
     sidebarOpen,
     showQuestionForm,
-    selectedChain,
-    prefilledQuestion,
+    prefilledQuestion: prefilledQuestionData,
     setSidebarOpen,
     setShowQuestionForm,
-    setSelectedChain,
-    setPrefilledQuestion,
+    setPrefilledQuestion: setPrefilledQuestionData,
     resetState,
   }
 }
