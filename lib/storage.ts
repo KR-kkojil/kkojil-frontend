@@ -51,6 +51,11 @@ export function getQuestions(): Question[] {
   }
 }
 
+export function getQuestionById(id: number): Question | undefined {
+  const questions = getQuestions()
+  return questions.find((q) => q.id === id)
+}
+
 export function saveQuestions(questions: Question[]): void {
   if (typeof window === "undefined") return
 
@@ -366,6 +371,8 @@ export function getRecentContent(): Array<{
   content: string
   time: string
   author: string
+  id: number
+  parentId?: number
 }> {
   if (typeof window === "undefined") return []
 
@@ -381,6 +388,7 @@ export function getRecentContent(): Array<{
         time: q.time,
         author: q.author,
         createdAt: q.createdAt,
+        id: q.id,
       })),
       ...allChains.map((c) => ({
         type: c.type,
@@ -388,6 +396,8 @@ export function getRecentContent(): Array<{
         time: c.time,
         author: c.author,
         createdAt: c.createdAt,
+        id: c.id,
+        parentId: c.parentId,
       })),
     ]
 
@@ -395,7 +405,7 @@ export function getRecentContent(): Array<{
     return allContent
       .sort((a, b) => b.createdAt - a.createdAt)
       .slice(0, 5)
-      .map(({ type, content, time, author }) => ({ type, content, time, author }))
+      .map(({ type, content, time, author, id, parentId }) => ({ type, content, time, author, id, parentId }))
   } catch (error) {
     console.error("Failed to load recent content:", error)
     return []

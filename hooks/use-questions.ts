@@ -101,6 +101,7 @@ export function useQuestions(): UseQuestionsReturn {
     filteredQuestions,
     loading,
     error,
+    searchQuery,
     addQuestion,
     searchQuestions,
     filterByCategory,

@@ -106,6 +106,7 @@ export interface UseQuestionsReturn {
   filteredQuestions: Question[]
   loading: boolean
   error: string | null
+  searchQuery?: string
   addQuestion: (data: Omit<Question, "id" | "createdAt" | "chainCount">) => Question
   searchQuestions: (query: string) => void
   filterByCategory: (category: string | null) => void

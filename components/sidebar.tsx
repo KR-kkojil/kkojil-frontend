@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { TrendingUp, Clock, Users, MessageCircle, HelpCircle, X, List } from "lucide-react"
 import { AIRecommendation } from "./ai-recommendation"
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { getRecentContent, getCategoryStats, type Question } from "@/lib/storage"
 
 interface SidebarProps {
@@ -26,8 +27,16 @@ export function Sidebar({
   onClose,
   questions = [],
 }: SidebarProps) {
+  const router = useRouter()
   const [recentContent, setRecentContent] = useState<
-    Array<{ type: "question" | "answer"; content: string; time: string; author: string }>
+    Array<{
+      type: "question" | "answer"
+      content: string
+      time: string
+      author: string
+      id: number
+      parentId?: number
+    }>
   >([])
   const [categoryStats, setCategoryStats] = useState<Array<{ name: string; count: number; color: string }>>([])
 
@@ -59,6 +68,16 @@ export function Sidebar({
     }
     if (onClose && window.innerWidth < 768) {
       onClose()
+    }
+  }
+
+  const handleRecentContentClick = (item: { type: "question" | "answer"; id: number; parentId?: number }) => {
+    const targetId = item.type === "question" ? item.id : item.parentId
+    if (targetId) {
+      router.push(`/questions/${targetId}`)
+      if (onClose && window.innerWidth < 768) {
+        onClose()
+      }
     }
   }
 
@@ -160,7 +179,11 @@ export function Sidebar({
               <div className="space-y-2">
                 {Array.isArray(recentContent) &&
                   recentContent.map((item, index) => (
-                    <div key={index} className="p-2 rounded-md bg-muted/50 text-sm">
+                    <div
+                      key={index}
+                      className="p-2 rounded-md bg-muted/50 text-sm cursor-pointer hover:bg-muted transition-colors"
+                      onClick={() => handleRecentContentClick(item)}
+                    >
                       <div className="flex items-center gap-1 mb-1">
                         {item.type === "question" ? (
                           <HelpCircle className="h-3 w-3 text-blue-500" />

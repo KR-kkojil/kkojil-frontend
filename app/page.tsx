@@ -23,7 +23,7 @@ import { useUIState } from "@/hooks/use-ui-state"
 import type { Question } from "@/types"
 
 export default function HomePage() {
-  const { questions, filteredQuestions, loading, error, addQuestion, searchQuestions, filterByCategory } =
+  const { questions, filteredQuestions, loading, error, addQuestion, searchQuestions, filterByCategory, searchQuery } =
     useQuestions()
 
   const {
@@ -109,21 +109,18 @@ export default function HomePage() {
   }, [searchQuestions, filterByCategory, resetState])
 
   const getPageTitle = useCallback(() => {
-    const hasSearch = filteredQuestions !== questions
-    const searchQuery = hasSearch ? "검색" : ""
-
     if (searchQuery) return `"${searchQuery}" 검색 결과`
     return "최신 질문들"
-  }, [filteredQuestions, questions])
+  }, [searchQuery])
 
   const getPageDescription = useCallback(() => {
     const count = filteredQuestions.length
 
-    if (filteredQuestions !== questions) {
+    if (searchQuery) {
       return `${count}개의 질문을 찾았습니다`
     }
     return "꼬리에 꼬리를 무는 흥미로운 질문들을 탐험해보세요"
-  }, [filteredQuestions, questions])
+  }, [filteredQuestions, searchQuery])
 
   const generateStructuredData = useCallback(() => {
     const questionsData = filteredQuestions.slice(0, 10).map((question, index) => ({
