@@ -307,7 +307,7 @@ export function initializeDefaultData(): void {
         category: "개발",
         author: "코딩초보",
         time: "2시간 전",
-        chainCount: 5,
+        chainCount: 2, // 실제 데이터 개수에 맞게 수정
         lastQuestion: "그렇다면 어떤 언어부터 시작해야 할까요?",
         createdAt: Date.now() - 2 * 60 * 60 * 1000,
       },
@@ -317,7 +317,7 @@ export function initializeDefaultData(): void {
         category: "철학",
         author: "생각하는사람",
         time: "4시간 전",
-        chainCount: 3,
+        chainCount: 1,
         lastQuestion: "창의성의 본질은 무엇인가요?",
         createdAt: Date.now() - 4 * 60 * 60 * 1000,
       },
@@ -327,7 +327,7 @@ export function initializeDefaultData(): void {
         category: "정치",
         author: "시민의식",
         time: "6시간 전",
-        chainCount: 8,
+        chainCount: 0,
         lastQuestion: "이슈는 다양하지만, 가장 큰 문제는 경제적 불평등입니다.",
         createdAt: Date.now() - 6 * 60 * 60 * 1000,
       },
@@ -337,7 +337,7 @@ export function initializeDefaultData(): void {
         category: "일상",
         author: "지친직장인",
         time: "8시간 전",
-        chainCount: 12,
+        chainCount: 0,
         lastQuestion: "휴식과 일의 밸런스를 맞추는 팁이 있나요?",
         createdAt: Date.now() - 8 * 60 * 60 * 1000,
       },
@@ -347,7 +347,7 @@ export function initializeDefaultData(): void {
         category: "개발",
         author: "진로고민",
         time: "1일 전",
-        chainCount: 15,
+        chainCount: 0,
         lastQuestion: "풀스택 개발자의 현실적인 장단점은 무엇인가요?",
         createdAt: Date.now() - 24 * 60 * 60 * 1000,
       },
@@ -357,12 +357,50 @@ export function initializeDefaultData(): void {
         category: "철학",
         author: "이프",
         time: "2일 전",
-        chainCount: 20,
+        chainCount: 0,
         lastQuestion: "과거의 후회가 현재의 나를 만든 것 아닐까요?",
         createdAt: Date.now() - 48 * 60 * 60 * 1000,
       },
     ]
     saveQuestions(defaultQuestions)
+  }
+
+  // 체인 데이터가 없으면 초기화
+  const existingChains = localStorage.getItem(CHAINS_KEY)
+  if (!existingChains || existingChains === "[]") {
+    const defaultChains: ChainItem[] = [
+      {
+        id: 101,
+        parentId: 1,
+        text: "가장 중요한 것은 '꾸준함'이라고 생각합니다. 언어는 도구일 뿐이죠.",
+        author: "시니어개발자",
+        time: "1시간 전",
+        level: 1,
+        createdAt: Date.now() - 3600000,
+        type: "answer",
+      },
+      {
+        id: 102,
+        parentId: 1,
+        text: "맞습니다. 하지만 처음 시작한다면 Python이 배우기 쉬워서 추천해요.",
+        author: "파이썬조아",
+        time: "30분 전",
+        level: 1,
+        createdAt: Date.now() - 1800000,
+        type: "question", // 꼬리에 꼬리를 무는 질문 형태
+      },
+      {
+        id: 201,
+        parentId: 2,
+        text: "창의성은 인간만의 고유한 영역이 아닐까요? 감정이 기반이 되니까요.",
+        author: "감성파",
+        time: "3시간 전",
+        level: 1,
+        createdAt: Date.now() - 10800000,
+        type: "answer",
+      },
+    ]
+    localStorage.setItem(CHAINS_KEY, JSON.stringify(defaultChains))
   }
 }
 
